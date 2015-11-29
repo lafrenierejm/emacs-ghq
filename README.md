@@ -3,10 +3,16 @@
 
 # Usage
 ## `ghq`
-Fetches the repository, equivalent to `ghq get`.
+Fetches the repository. equivalent to `ghq get`.
 
 ## `ghq-ssh`
-Fetches the repository using ssh, equivalent to `ghq get -p`.
+Fetches the repository using ssh. equivalent to `ghq get -p`.
+
+## `ghq-list`
+Displays a message with the ghq project list paths relative to the root. equivalent to `ghq list`.
+
+## `ghq-list-full-path`
+Displays a message with the absolute ghq project list paths. equivalent to `ghq list --full-path`.
 
 ## `helm-ghq-list`
 List the repositories under `ghq root` using helm.

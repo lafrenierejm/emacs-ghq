@@ -3,7 +3,7 @@
 ;; Author: Roman Coedo <romancoedo@gmail.com>
 ;; Created 28 November 2015
 ;; Version: 0.1.0
-;; Package-Requires: ((helm "1.7.6"))
+;; Package-Requires: ()
 
 ;; Keywords: ghq
 
@@ -33,8 +33,6 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
-(require 'helm)
-
 (defun ghq--find-root ()
   "Find the ghq root directory."
   (car (split-string (shell-command-to-string "ghq root"))))
@@ -79,6 +77,16 @@
   "Get the repository via ghq using ssh."
   (interactive)
   (ghq--get-repository-ssh (read-string "Enter the repository: ")))
+
+(defun ghq-list ()
+  "Display the ghq project list in a message."
+  (interactive)
+  (message (shell-command-to-string "ghq list")))
+
+(defun ghq-list-full-path ()
+  "Display the ghq project list in a message."
+  (interactive)
+  (message (shell-command-to-string "ghq list --full-path")))
 
 (defun helm-ghq-list ()
   "Opens a helm buffer with ghq projects as source."
