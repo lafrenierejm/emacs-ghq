@@ -63,9 +63,10 @@
 
 (defun ghq--build-helm-source ()
   "Build a helm source."
+  (when (fboundp 'helm-build-async-source)
   (helm-build-async-source "Search ghq projects with helm"
     :candidates-process (ghq--find-projects)
-    :action ghq--helm-action))
+    :action ghq--helm-action)))
 
 ;;;###autoload
 (defun ghq ()
@@ -91,7 +92,8 @@
 (defun helm-ghq-list ()
   "Opens a helm buffer with ghq projects as source."
   (interactive)
-  (helm :sources (ghq--build-helm-source) :buffer "*ghq-helm*"))
+  (when (and (fboundp 'ghq--build-helm-source) (fboundp 'helm))
+    (helm :sources (ghq--build-helm-source) :buffer "*ghq-helm*")))
 
 (provide 'ghq)
 ;;; ghq.el ends here
