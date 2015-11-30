@@ -18,7 +18,6 @@ Displays a message with the absolute ghq project list paths. equivalent to `ghq 
 List the repositories under `ghq root` using helm.
 
 # Requirements
-* helm 1.7.6
 * have [ghq](https://github.com/motemen/ghq) installed.
 
 [melpa-link]: http://melpa.org/#/ghq
