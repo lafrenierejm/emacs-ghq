@@ -2,7 +2,7 @@
 
 ;; Author: Roman Coedo <romancoedo@gmail.com>
 ;; Created 28 November 2015
-;; Version: 0.1.0
+;; Version: 0.1.1
 ;; Package-Requires: ()
 
 ;; Keywords: ghq
@@ -10,7 +10,6 @@
 ;;; Commentary:
 
 ;; This package provides a set of functions wrapping ghq.
-;; It plays nice with projectile for proeject switching.
 
 ;;; License:
 
