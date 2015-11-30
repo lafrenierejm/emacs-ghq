@@ -1,4 +1,4 @@
-# emacs-ghq
+# emacs-ghq [![melpa badge][melpa-badge]][melpa-link]
 [Ghq](https://github.com/motemen/ghq) interface for emacs.
 
 # Usage
@@ -20,3 +20,6 @@ List the repositories under `ghq root` using helm.
 # Requirements
 * helm 1.7.6
 * have [ghq](https://github.com/motemen/ghq) installed.
+
+[melpa-link]: http://melpa.org/#/ghq
+[melpa-badge]: http://melpa.org/packages/ghq-badge.svg
