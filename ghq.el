@@ -2,7 +2,7 @@
 
 ;; Author: Roman Coedo <romancoedo@gmail.com>
 ;; Created 28 November 2015
-;; Version: 0.1.2
+;; Version: 0.1.3
 ;; Package-Requires: ()
 
 ;; Keywords: ghq
@@ -69,10 +69,9 @@
 
 (defun ghq--build-helm-source ()
   "Build a helm source."
-  (when (fboundp 'helm-build-sync-source)
-  (helm-build-sync-source "Search ghq projects with helm"
+  (helm-make-source "Search ghq projects with helm" 'helm-source-sync
     :candidates (ghq--find-projects)
-    :action ghq--helm-action)))
+    :action ghq--helm-action))
 
 ;;;###autoload
 (defun ghq ()
