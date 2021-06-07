@@ -6,7 +6,7 @@
 ;; Author: Roman Coedo <romancoedo@gmail.com>
 ;; Created 28 November 2015
 ;; Version: 0.1.3
-;; Package-Requires: ()
+;; Package-Requires: ((emacs "26.1") (dash "2.18.0") (s "1.7.0"))
 
 ;; Keywords: ghq
 
@@ -35,6 +35,9 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
+(require 'dash)
+(require 'rx)
+(require 's)
 (require 'simple)
 
 (defun ghq--find-root ()
@@ -52,13 +55,36 @@
   "Find the list of ghq projects."
   (split-string (shell-command-to-string "ghq list --full-path")))
 
-(defun ghq--get-repository (repository)
-  "Get the REPOSITORY."
-  (async-shell-command (concat "ghq get " repository)))
+;;;###autoload
+(defun ghq (repository &optional ssh)
+  "Clone REPOSITORY via ghq, optionally over SSH."
+  (interactive "MEnter the repository: \nP")
+  (let* ((command (-non-nil `("ghq" "get" ,(when ssh "-p") ,repository)))
+         (command-string (s-join " " command))
+         (buffer (generate-new-buffer (s-wrap command-string "*")))
+         path)
+    (set-process-sentinel
+     (apply #'start-process command-string buffer command)
+     (lambda (p e)
+       (with-current-buffer buffer
+         (goto-char (point-min))
+         (re-search-forward
+          (rx (seq line-start (one-or-more whitespace)
+                   (or (seq "exists "
+                            (group-n 1 (one-or-more not-newline)))
+                       (seq "clone "
+                            (one-or-more (not whitespace))
+                            " -> "
+                            (group-n 1 (one-or-more not-newline))))
+                   line-end)))
+         (setq path (match-string 1))
+         (message "%s cloned to %s" repository path))))))
 
-(defun ghq--get-repository-ssh (repository)
-  "Get the REPOSITORY using ssh."
-  (async-shell-command (concat "ghq get -p " repository)))
+(defun ghq-ssh ()
+  "Clone a repository via ghq over SSH."
+  (interactive)
+  (let ((current-prefix-arg t))
+    (call-interactively #'ghq)))
 
 (defvar ghq--helm-action
   '(("Open Dired"              . (lambda (dir) (dired              (concat ghq--root "/" dir))))
@@ -77,17 +103,6 @@
   (helm-make-source "Search ghq projects with helm" 'helm-source-sync
     :candidates (ghq--find-projects)
     :action ghq--helm-action))
-
-;;;###autoload
-(defun ghq ()
-  "Get the repository via ghq."
-  (interactive)
-  (ghq--get-repository (read-string "Enter the repository: ")))
-
-(defun ghq-ssh ()
-  "Get the repository via ghq using ssh."
-  (interactive)
-  (ghq--get-repository-ssh (read-string "Enter the repository: ")))
 
 (defun ghq-list ()
   "Display the ghq project list in a message."
