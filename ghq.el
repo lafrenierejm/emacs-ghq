@@ -80,6 +80,7 @@
          (setq path (match-string 1))
          (message "%s cloned to %s" repository path))))))
 
+;;;###autoload
 (defun ghq-ssh ()
   "Clone a repository via ghq over SSH."
   (interactive)
