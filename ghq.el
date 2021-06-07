@@ -1,5 +1,8 @@
 ;;; ghq.el --- Ghq interface for emacs -*- lexical-binding: t -*-
 
+;; Copyright (C) 2015 Roman Coedo
+;; Copyright (C) 2021 Joseph LaFreniere
+
 ;; Author: Roman Coedo <romancoedo@gmail.com>
 ;; Created 28 November 2015
 ;; Version: 0.1.3
@@ -32,6 +35,8 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
+(require 'simple)
+
 (defun ghq--find-root ()
   "Find the ghq root directory."
   (car (split-string (shell-command-to-string "ghq root"))))
