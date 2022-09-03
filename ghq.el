@@ -47,6 +47,9 @@
 (defvar ghq--root
   (ghq--find-root))
 
+(defcustom ghq-after-clone-functions nil
+  "List of functions to be called on the path of a newly cloned repository.")
+
 (defun ghq--find-projects ()
   "Find the list of ghq projects relative to ghq root."
   (split-string (shell-command-to-string "ghq list")))
@@ -59,26 +62,30 @@
 (defun ghq (repository &optional ssh)
   "Clone REPOSITORY via ghq, optionally over SSH."
   (interactive "MEnter the repository: \nP")
-  (let* ((command (-non-nil `("ghq" "get" ,(when ssh "-p") ,repository)))
-         (command-string (s-join " " command))
-         (buffer (generate-new-buffer (s-wrap command-string "*")))
-         path)
+  (let* ((clone-command (-non-nil `("ghq" "get" ,(when ssh "-p") ,repository)))
+         (clone-command-string (s-join " " clone-command)))
     (set-process-sentinel
-     (apply #'start-process command-string buffer command)
-     (lambda (p e)
-       (with-current-buffer buffer
-         (goto-char (point-min))
-         (re-search-forward
-          (rx (seq line-start (one-or-more whitespace)
-                   (or (seq "exists "
-                            (group-n 1 (one-or-more not-newline)))
-                       (seq "clone "
-                            (one-or-more (not whitespace))
-                            " -> "
-                            (group-n 1 (one-or-more not-newline))))
-                   line-end)))
-         (setq path (match-string 1))
-         (message "%s cloned to %s" repository path))))))
+     (apply #'start-file-process clone-command-string nil clone-command)
+     `(lambda (process event)
+        (when (eq (process-status process) 'exit)
+          (let* ((list-command (list "ghq" "list" "--full-path" "--exact" ,repository))
+                 (list-command-string (s-join " " list-command))
+                 (buffer (generate-new-buffer (s-wrap list-command-string "*"))))
+            (set-process-sentinel
+             (apply #'start-file-process list-command-string buffer list-command)
+             `(lambda (process event)
+                (when (memq (process-status process) '(exit signal))
+                  (when-let
+                      ((path (with-current-buffer ,buffer
+                               (goto-char (point-min))
+                               (re-search-forward
+                                (rx
+                                 (seq line-start (group-n 1 (one-or-more not-newline)) line-end)))
+                               (match-string 1))))
+                    (message "%s cloned to %s" ,,repository path)
+                    (when path
+                      (dolist (fun ghq-after-clone-functions)
+                        (funcall fun path)))))))))))))
 
 ;;;###autoload
 (defun ghq-ssh ()
