@@ -49,7 +49,9 @@
   (ghq--find-root))
 
 (defcustom ghq-after-clone-functions nil
-  "List of functions to be called on the path of a newly cloned repository.")
+  "List of functions to be called on the path of a newly cloned repository."
+  :group 'ghq
+  :type '(repeat symbol))
 
 (defun ghq--find-projects ()
   "Find the list of ghq projects relative to ghq root."
