@@ -102,19 +102,6 @@
     ("Open Dired other window" . (lambda (dir) (dired-other-window (concat ghq--root "/" dir))))
     ("Open Dired other frame"  . (lambda (dir) (dired-other-frame  (concat ghq--root "/" dir))))))
 
-;(defun ghq--build-helm-source ()
-  ;"Build a helm source."
-  ;(when (fboundp 'helm-build-sync-source)
-  ;(helm-build-async-source "Search ghq projects with helm"
-    ;:candidates-process (lambda () (start-process "ghq-list-process" nil "ghq" "list" helm-pattern))
-    ;:action ghq--helm-action)))
-
-(defun ghq--build-helm-source ()
-  "Build a helm source."
-  (helm-make-source "Search ghq projects with helm" 'helm-source-sync
-    :candidates (ghq--find-projects)
-    :action ghq--helm-action))
-
 (defun ghq-list ()
   "Display the ghq project list in a message."
   (interactive)
@@ -128,8 +115,15 @@
 (defun helm-ghq-list ()
   "Opens a helm buffer with ghq projects as source."
   (interactive)
-  (when (and (fboundp 'ghq--build-helm-source) (fboundp 'helm))
-    (helm :sources (ghq--build-helm-source) :prompt "Select repository: " :buffer "*ghq-helm*")))
+  (when (and  (fboundp 'helm) (fboundp 'helm-make-source))
+    (helm
+     :sources (helm-make-source
+               "Search ghq projects with helm"
+               'helm-source-sync
+               :candidates (ghq--find-projects)
+               :action ghq--helm-action)
+     :prompt "Select repository: "
+     :buffer "*ghq-helm*")))
 
 (provide 'ghq)
 ;;; ghq.el ends here
