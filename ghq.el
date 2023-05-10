@@ -4,11 +4,12 @@
 ;; Copyright (C) 2021 Joseph LaFreniere
 
 ;; Author: Roman Coedo <romancoedo@gmail.com>
+;; Maintainer: Joseph LaFreniere <joseph@lafreniere.xyz>
+;; URL: https://github.com/lafrenierejm/emacs-ghq
 ;; Created 28 November 2015
-;; Version: 0.1.3
+;; Version: 0.2.0
+;; Keywords: convenience
 ;; Package-Requires: ((emacs "26.1") (dash "2.18.0") (s "1.7.0"))
-
-;; Keywords: ghq
 
 ;;; Commentary:
 
